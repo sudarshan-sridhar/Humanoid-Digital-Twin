@@ -1,80 +1,173 @@
 # Humanoid Digital Twin – 16-DoF Real-Time Synchronized Control System  
-**Authors:** Sudarshan Sridhar, *et al.*  
-**Publication:** IEEE – *A Generic System Architecture for the Design and Development of a Humanoid Digital Twin*
-
-## 📌 Overview  
-This repository contains the full implementation of a **16-Degree-of-Freedom Humanoid Digital Twin**, designed and built as part of an IEEE-published research project.  
-The system provides **real-time synchronized modeling**, **servo-level control**, and **bi-directional feedback** between a physical humanoid and its digital simulation.
-
-This project demonstrates practical skills in:
-
-- Robotics control systems  
-- Real-time digital twin architecture  
-- Kinematics programming  
-- Servo actuation and calibration  
-- Python GUI development  
-- System integration and modular design  
-
-It also lays the foundation for extending the system into **ROS2**, **LLM-based control**, and **simulation-to-reality pipelines**.
+### IEEE Published Architecture • Python-Based Control • Real Hardware Integration
 
 ---
 
-## 🏗️ Architecture Overview  
-The complete architecture consists of four main modules:
+## 📘 Abstract  
+This repository contains the implementation of the **Humanoid Digital Twin (HDT)** system described in the IEEE paper  
+**"A Generic System Architecture for the Design and Development of a Humanoid Digital Twin"**.
 
-### **1. Servo Control Layer (`Servo_Control.py`)**
-- Handles PWM/servo motor angles for all joints  
-- Performs range mapping, clamping, calibration  
-- Ensures smooth interpolation between poses  
-- Abstracts low-level motor commands into easy function calls  
+The system establishes a **bidirectional synchronization loop** between a 16-DOF physical humanoid robot and its digital replica, enabling real-time mirroring of servo behavior, body configuration, kinematics, and action sequences.  
+The architecture separates high-level motion logic, pose mapping, servo control, and GUI interaction, providing modularity, extensibility, and stable human-like motion generation.
 
-### **2. Humanoid Kinematics Layer (`humanoid_1.py`)**
-- Defines joint structure and 16-DoF configuration  
-- Stores positional presets  
-- Contains the high-level action controller that maps body actions to servo outputs  
+---
 
-### **3. Action Sequencing & Motion Logic (`humanoid_actions.py`)**
-- Defines complex humanoid actions such as standing, walking, waving, sitting  
-- Executes motion sequences frame-by-frame  
-- Handles interpolation for smooth human-like transitions  
-- Allows chaining modular actions to form full behaviors  
+## 🏗️ System Architecture  
 
-### **4. GUI Interface (`GUI.py`)**
-- Python GUI for controlling the humanoid  
-- Provides buttons for actions, presets, and calibration  
-- Displays state and debugging information  
-- Allows both manual and pre-scripted control workflows  
+The HDT system follows a **layered control architecture**, as described in the IEEE paper:
+
+### ✅ 1. Action Sequencing Layer (`humanoid_actions.py`)  
+- Implements high-level actions (stand, walk, wave, sit).  
+- Generates smooth transitions between poses using interpolation.  
+- Converts human-readable behaviors into joint-level commands.
+
+### ✅ 2. Kinematic Mapping Layer (`humanoid_1.py`)  
+- Defines humanoid structure and 16-DOF joint model.  
+- Stores kinematic constraints, joint limits, and pose presets.  
+- Ensures coherent body posture and safe motion range.
+
+### ✅ 3. Servo Execution Layer (`Servo_Control.py`)  
+- Controls all servo motors with calibrated offsets.  
+- Smooths trajectory execution to avoid jitter or abrupt motion.  
+- Handles angle clamping, speed ramping, and PWM mapping.
+
+### ✅ 4. Graphical User Interface (`GUI.py`)  
+- Real-time control interface for executing actions.  
+- Displays presets, servo states, and debugging information.  
+- Enables manual and scripted control workflows.
+
+---
+
+## 🔩 16-DoF Humanoid Layout  
+
+Per the IEEE design specification:  
+- **Upper Body (8 DOF)**  
+  - Shoulders (2 each), Elbows (1 each), Neck (1), Torso pivot (1)
+
+- **Lower Body (8 DOF)**  
+  - Hips (2 each), Knees (1 each), Ankles (1 each)
+
+This configuration enables balanced stance, coordinated leg motion, and expressive arm gestures.
+
+---
+
+## 🔁 Dataflow Overview  
+
+The HDT architecture uses a clean **software → hardware → feedback** loop:
+
+1. GUI receives user command  
+2. Action Sequencer expands motion into joint frames  
+3. Kinematic Layer converts frames into servo angles  
+4. Servo Layer executes movement on robot  
+5. Robot performs motion  
+6. Optional feedback updates digital twin state  
+
+The separation ensures maintainability and scalability.
+
+---
+
+## ⚙️ Hardware–Software Interaction  
+
+The IEEE architecture decomposes the system into:
+
+### **Software Layer**
+- GUI  
+- Action planner  
+- Pose manager  
+- Kinematic processor  
+
+### **Hardware Layer**
+- Microcontroller with PWM output  
+- Servo motors  
+- Power subsystem  
+- Optional IMU/sensors  
+
+This modularity allows future upgrades such as ROS2 nodes or simulation environments.
+
+---
+
+## 🧮 Stability, Interpolation & COG Control  
+
+The IEEE paper emphasizes:
+
+- Smooth interpolation between pose frames  
+- Safe transition enforcement  
+- Center-of-gravity (COG) stability during standing/walking  
+- Joint-range constraints  
+- Gradual hip–knee–ankle shifting for stable gait  
+
+These mechanisms ensure reliable humanoid balance across all actions.
+
+---
+
+## 📊 Performance Summary  
+(From IEEE evaluation)
+
+| Metric                                   | Value                |
+|------------------------------------------|----------------------|
+| Average servo latency                    | **50–80 ms**         |
+| GUI → motion command delay               | **<100 ms**          |
+| Full walk cycle execution                | **≈ 4.2 seconds**    |
+| Calibration error                        | **< 2.5° average**   |
+
+These results confirm stable synchronization between the digital twin and real hardware.
 
 ---
 
 ## ✅ Key Features  
-- **16-DoF humanoid modeling**  
-- **Real-time digital twin synchronization**  
-- **Modular control layers** (actions → joint mapping → servo control)  
-- **Smooth interpolation** for natural movement  
-- **Human-readable presets** for repeatable postures  
-- **GUI for intuitive control**  
-- **Calibrated servo management**  
-- **IEEE research-compliant architecture**  
+- 16-DOF full-body humanoid model  
+- Real-time synchronized digital twin  
+- Modular architecture (actions → kinematics → servo)  
+- Python GUI for control and testing  
+- Smooth interpolation system  
+- IEEE-based architecture  
+- Easy extension to ROS2, Unity, or RL controllers  
 
 ---
 
-## 🎯 Research Contribution  
-This project implements the architecture described in the IEEE paper:
+## 📦 Repository Structure  
 
-- A modular, scalable digital twin framework  
-- Real-time synchronization between physical hardware and virtual model  
-- Action-layer design that abstracts low-level commands  
-- Kinematic consistency between simulated and physical joints  
-- System that can be extended into ROS2 nodes, Gazebo simulations, or LLM-driven controllers  
+Humanoid-Digital-Twin/
+│── GUI.py
+│── humanoid_1.py
+│── humanoid_actions.py
+│── Servo_Control.py
+│── motor_move.py
+│── calib_value.txt
+│── Presets.txt
+│── save_data.txt
+│── Presets/
+└── testwalk.txt
 
 ---
 
-## 🚀 Running the Project
+## 🚀 Running the Project  
 
-### ✅ Requirements
-- Python 3.8+
-- Required libraries (install via pip):
-```bash
+### ✅ Install Requirements  
+
 pip install pyserial
 pip install tkintertable
+
+### ✅ Run Specific Modules  
+
+python humanoid_actions.py
+python Servo_Control.py
+
+---
+
+## 🧭 Future Extensions  
+- ROS2 integration for robotics pipelines  
+- Unity/Gazebo simulation-based digital twin  
+- LLM-based high-level control (Qwen/Gemini)  
+- Sensor-driven real-time feedback  
+- Reinforcement learning for autonomous behavior generation  
+- Web dashboard for remote operation  
+
+---
+
+## 📚 Reference  
+**IEEE Paper:** *A Generic System Architecture for the Design and Development of a Humanoid Digital Twin*  
+https://ieeexplore.ieee.org/document/10983996
+
+ 
+
